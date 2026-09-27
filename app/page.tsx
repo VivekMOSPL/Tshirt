@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "@/lib/supabase/server";
+import { getSupabaseAdmin } from "@/lib/supabase/server";
 import { Catalogue } from "@/types";
 import { OrderForm } from "@/components/OrderForm";
 import { formatMoney } from "@/lib/catalogue";
@@ -6,6 +6,7 @@ import { formatMoney } from "@/lib/catalogue";
 export const dynamic = "force-dynamic";
 
 async function loadCatalogue(): Promise<Catalogue> {
+  const supabaseAdmin = getSupabaseAdmin();
   const { data, error } = await supabaseAdmin.rpc("tsh_get_catalogue");
   if (error) throw error;
   return (data ?? { styles: [] }) as Catalogue;

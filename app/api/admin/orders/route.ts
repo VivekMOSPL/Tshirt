@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase/server";
+import { getSupabaseAdmin } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const status = url.searchParams.get("status") || "all";
+export async function GET() {
+  let supabaseAdmin;
+  try {
+    supabaseAdmin = getSupabaseAdmin();
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
+  }
 
   let query = supabaseAdmin
     .from("tsh_orders")
@@ -19,10 +23,6 @@ export async function GET(request: Request) {
       { count: "exact" }
     )
     .order("created_at", { ascending: false });
-
-  if (status !== "all") {
-    query = query.eq("status", status);
-  }
 
   const { data, count, error } = await query;
   if (error) {

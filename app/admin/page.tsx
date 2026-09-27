@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "@/lib/supabase/server";
+import { getSupabaseAdmin } from "@/lib/supabase/server";
 import { formatMoney } from "@/lib/catalogue";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +9,7 @@ export default async function AdminPage() {
   let loadError: string | null = null;
 
   try {
+    const supabaseAdmin = getSupabaseAdmin();
     const { data, count: c, error } = await supabaseAdmin
       .from("tsh_orders")
       .select(

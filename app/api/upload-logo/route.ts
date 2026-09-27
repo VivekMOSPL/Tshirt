@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin, STORAGE_BUCKET } from "@/lib/supabase/server";
+import { getSupabaseAdmin, STORAGE_BUCKET } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
@@ -7,6 +7,13 @@ export const dynamic = "force-dynamic";
 // Uploads to the tsh-logos bucket (not browser-visible key). Returns
 // { path, public_url } so the caller can save the path on the order.
 export async function POST(request: Request) {
+  let supabaseAdmin;
+  try {
+    supabaseAdmin = getSupabaseAdmin();
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
+  }
+
   const form = await request.formData();
   const file = form.get("file");
   if (!file || !(file instanceof File) || file.size === 0) {
